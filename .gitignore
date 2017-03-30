@@ -1,5 +1,5 @@
 
-# Created by https://www.gitignore.io/api/rails,vagrant
+# Created by https://www.gitignore.io/api/rails,vagrant,emacs
 
 ### Rails ###
 *.rbc
@@ -46,3 +46,17 @@ config/initializers/secret_token.rb
 .vagrant/
 
 # End of https://www.gitignore.io/api/rails,vagrant
+
+### Emacs ###
+# -*- mode: gitignore; -*-
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+### Vagrant Log Files ###
+*console.log
