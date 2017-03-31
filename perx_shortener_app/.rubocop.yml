@@ -1,0 +1,33 @@
+AllCops:
+  DisplayCopNames: false
+
+Metrics/LineLength:
+  # This will disable the rule completely, regardless what other options you put
+  Enabled: false
+
+Style/FileName:
+  Enabled: false
+
+Style/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
+
+Style/SpaceInsideBlockBraces:
+  Enabled: false
+  EnforcedStyle: no_space
+
+
+Style/SpaceBeforeBlockBraces:
+  EnforcedStyle: no_space
+
+Style/EmptyLinesAroundClassBody:
+  Enabled: false
+  EnforcedStyle: empty_lines
+
+Style/Documentation:
+ Enabled: false
+
+Style/VariableNumber:
+  EnforcedStyle: snake_case
+
+Style/FrozenStringLiteralComment:
+  Enabled: false

@@ -1,0 +1,2 @@
+class ShortenedUrlHit < ApplicationRecord
+end

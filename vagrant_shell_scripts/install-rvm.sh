@@ -15,3 +15,4 @@ source ~/.profile
 echo "Installing Rails"
 gem install rails --no-rdoc --no-ri 
 
+gem install rubocop

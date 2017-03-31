@@ -1,0 +1,23 @@
+#!/bin/bash
+declare -A CURRENT_MD5S;
+
+echo $*;
+for i in $*; do
+    md5sum $i;
+    CURRENT_MD5S[$i]="";
+done
+
+while true; do
+    for i in $*; do
+
+	NEW_MD5=$(md5sum $i);
+	LAST_MD5=${CURRENT_MD5S[$i]}
+	if [ "$LAST_MD5" != "$NEW_MD5" ]
+	then
+	    CURRENT_MD5S[$i]=$NEW_MD5;
+	    echo "Running on $i";
+	    rubocop -D $i;
+	fi
+    done
+    sleep 1
+done
