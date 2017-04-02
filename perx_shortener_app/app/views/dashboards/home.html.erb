@@ -1,0 +1,19 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <h2>Shorten a URL</h2>
+      <%= simple_form_for @shortened_url, html: {id: "record_form"}, wrapper: :horizontal_form  do |f| %>
+	<%= f.input :url %>
+	<%= f.button :submit, "Shorten", class: "btn-primary" %>
+      <% end %>
+    </div>
+    <div class="col-md-6">
+      <h2>Get API Credentials</h2>
+      <%= simple_form_for @api_credential, html: {id: "record_form"}, wrapper: :horizontal_form  do |f| %>
+	<%= f.input :name %>
+	<%= f.button :submit, "Get Credentials", class: "btn-primary" %>
+      <% end %>
+    </div>
+
+  </div>
+</div>

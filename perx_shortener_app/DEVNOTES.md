@@ -2,7 +2,55 @@
 
 This file will contain my thoughts while I develop the application. Older entries are at the bottom.
 
+== Sunday, 2nd April ==
+
+=== Hit Logging Data ===
+
+I will be using a user-agent parser to store extra information about each hit the shortened urls have.  The main questions is how much to normalize the browser data.  There are two options
+
+* Store the information in the hit table as strings (operating system, os version, browser type, browser version, device)
+* 2NF (2nd Normal Form) normalize the data and just reference them via belongs to.  belongs_to :operating_system_version, belongs_to :browser_version (operating system version would have os name and version)
+* 3NF (3rd Normal Form) Where there is a table named operating_system_version which has operating_system_type_id and version.
+
+3rd Normal form would give us the most space saving and has the highest querying data performance.  It also has the most clarity of design if other developers need to work on the code  But has the cost of additional queries for each hit.  I will go with 3NF since this design is not aiming for high performance at the start.  Need to make sure it's easy to refactor if we need to switch to a different form.
+
+
+
+=== Change to Hash Signature ===
+
+After doing a bit of research on api authentication it seems like MD5 is not a good choice for the hash signature to verify the api secret.  The authentication I'm using is https://en.wikipedia.org/wiki/Hash-based_message_authentication_code which is vulnerable to a length extension attack (https://en.wikipedia.org/wiki/Length_extension_attack).  This shouldn't cause any problems as the api authentication is not that important for this service.  However, I can defend against it by using a slightly different hash signature.  Instead of md5(secret + data) which is vulnerable, I can use md5(secret + md5(secret + data)).  I could switch to SHA-3 instead of MD5 but that doesn't have great support in ruby and other languages.
+
+== Saturday, 1st April ==
+
+=== Home Page Form Object Creation ===
+
+The home page is normally displayed from dashboards#home.  The home method creates 2 objects for the forms @api_credential and @shortened_url.  Since api_credential#create and shortened_url#create both will need to display the home page again if form validation fails I need to have a way to create the other object easily.  I've decided to make a simple module which has a function render_dashboard_home.  That method will create each object if it doesnt exist and then call render to display dashboards#home.  That way all the controller methods can use that function to set things up.  It seems like there should be a more standard way of handling this but I have not found any. I decided to use a module rather than adding the function on ApplicationController so that it's clear what is happening since it requires an include statement.
+
+=== Detailed API Request Format ===
+
+==== Shorten URL (shortened_url put) ====
+
+The json_data will be a json encoded hash.  The verification_hash is a MD5 hash of json_data + api_secret (both strings).
+````
+{
+  json_data: {
+    url: "http://www.google.com",
+    api_key: "898h89hh9",
+    utc_time_in_seconds: 1491023893
+  },
+  verification_hash: "0cbc6611f5540bd0809a388dc95a615b"
+}
+````
+
 == Friday, 31st March ==
+
+=== API Request Authorization ===
+
+I'm making a simple secure authorization system which uses a secret key that is added to the data to gen an MD5 hash.  That way the system can check if the request is valid.  The data (post or get) for an api request will have the following fields:
+
+```{json_data: "(data in json format...url, api_key, utc_unix_time, etc)", verification_hash: "a hash of the json_data string + the api_secret"}```
+
+The API Secret is never transmitted in the API Request.  The utc_unix_time is passed so that the request stops working after 10 minutes to make it not be possible to resubmit at a later time and spam the server.
 
 
 === Validations Testing ===

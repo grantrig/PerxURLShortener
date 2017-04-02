@@ -12,7 +12,7 @@ while true; do
 
 	NEW_MD5=$(md5sum $i);
 	LAST_MD5=${CURRENT_MD5S[$i]}
-	if [ "$LAST_MD5" != "$NEW_MD5" ]
+	if [ "$LAST_MD5" != "$NEW_MD5" ] && [ "$i" != "spec/rails_helper.rb" ] && [ "$i" != "spec/spec_helper.rb" ]
 	then
 	    CURRENT_MD5S[$i]=$NEW_MD5;
 	    echo "Running on $i";

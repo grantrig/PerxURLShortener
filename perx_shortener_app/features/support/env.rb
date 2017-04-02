@@ -5,6 +5,16 @@
 # files.
 
 require 'cucumber/rails'
+require 'capybara/poltergeist'
+require 'minitest/spec'
+
+Capybara.register_driver :poltergeist do |app|
+  Capybara::Poltergeist::Driver.new(
+                                    app,
+
+                                    debug:       false
+                                    )
+end
 
 # Capybara defaults to CSS3 selectors rather than XPath.
 # If you'd prefer to use XPath, just uncomment this line and adjust any

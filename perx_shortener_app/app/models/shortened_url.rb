@@ -1,3 +1,5 @@
+require 'uri'
+
 class ShortenedUrl < ApplicationRecord
 
   CODE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.delete('I').delete('L')
@@ -8,6 +10,7 @@ class ShortenedUrl < ApplicationRecord
   validates_uniqueness_of :short_code
   validates_length_of :short_code, in: 6..12
   validates_length_of :url, in: 6..1000
+  validates_format_of :url, with: %r{https?://.*}
 
   def set_short_code
     self.short_code = self.class.unique_short_code if new_record?
@@ -21,6 +24,12 @@ class ShortenedUrl < ApplicationRecord
       is_unique = where('short_code = ?', short_code).count.zero?
     end
     short_code
+  end
+
+  def full_shortened_url
+    @port ||= APP_CONFIG[:port].to_i == 80 ? '' : ':' + APP_CONFIG[:port].to_s
+    @uri ||= URI("http://#{APP_CONFIG[:hostname]}#{@port}/s/#{short_code}")
+    @uri.to_s
   end
 
   # This is only for generating the random characters.  DOES NOT CHECK UNIQUENESS.

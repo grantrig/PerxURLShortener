@@ -13,6 +13,7 @@
 ActiveRecord::Schema.define(version: 20170330133142) do
 
   create_table "api_credentials", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string   "name"
     t.string   "api_key"
     t.string   "api_secret"
     t.datetime "created_at", null: false

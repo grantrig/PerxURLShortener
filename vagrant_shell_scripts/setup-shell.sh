@@ -1,5 +1,5 @@
-echo "export LANG=en_US.UTF-8" >> ~/.bash_profile
-echo "export LC_ALL=en_US.UTF-8" >> ~/.bash_profile
+#echo "export LANG=en_US.UTF-8" >> ~/.bash_profile
+#echo "export LC_ALL=en_US.UTF-8" >> ~/.bash_profile
 git config --global user.name "Grant"
 git config --global user.email grant@arsemporium.com
 
@@ -16,3 +16,5 @@ if [ -e "$file" ]; then
 else
     echo "No ZSH shell exists, not changing shell"
 fi
+
+echo "HISTFILE=.zhistory" >> ~/.zshrc
