@@ -1,12 +1,13 @@
-<table>
+<div class="alert alert-success" role="alert">The shortened url is ready for use</div>
+<table class="table table-bordered table-striped">
   <tbody>
     <tr>
-      <td>Original URL:</td>
-      <td><%= @shortened_url.url %></td>
+      <td><code class="active">Original URL:</code></td>
+      <td><input type="text" class="form-control" value="<%= @shortened_url.url %>" /></td>
     </tr>
     <tr>
-      <td>Shortened URL:</td>
-      <td><input type="text" id="shortened_url" value="<%= @shortened_url.full_shortened_url %>" /></td>
+      <td><code class="active">Shortened URL:</code></td>
+      <td><input type="text" id="shortened_url" class="form-control" value="<%= @shortened_url.full_shortened_url %>" /></td>
     </tr>
   </tbody>
 </table>

@@ -1,12 +1,13 @@
-<table class="api_credentials">
+<div class="alert alert-success" role="alert">Your API Credentials have been created</div>
+<table class="api_credentials table table-bordered table-striped">
   <tbody>
     <tr>
-      <td>API Key:</td>
-      <td><%= @api_credential.api_key %></td>
+      <td><code class="active">API Key:</code></td>
+      <td><input class="form-control" type="text" value="<%= @api_credential.api_key %>" /></td>
     </tr>
     <tr>
-      <td>API Secret:</td>
-      <td><%= @api_credential.api_secret %></td>
+      <td><code class="active">API Secret:</code></td>
+      <td><input class="form-control" type="text" value="<%= @api_credential.api_secret %>" /></td>
     </tr>
   </tbody>
 </table>
