@@ -1,34 +1,43 @@
-= Developer Notes =
+# Developer Notes
 
 This file will contain my thoughts while I develop the application. Older entries are at the bottom.
 
-== Tuesday, 4th April ==
+## Tuesday, 4th April
 
-=== JSON API Format ===
+### JSON API Format
 
-==== Shortened URL Show ====
+#### Shortened URL Show
 
-```GET /s/:short_code```
-===== Query =====
+```
+##### Query
+```ruby
+url = "/s/#{short_code}"
 {json_data: {api_key: '', utc_time_in_seconds: 0, short_code: '', since_utc_seconds: 0, until_utc_seconds: 0}, verification_hash: ''}
+```
 
-===== Result =====
+##### Result
+```ruby
 {hits: [{ip_address: '', utc_seconds: 0, operating_system: '', operating_system_version: '', browser_type: '', browser_version: '', device: '', accept_language: '', user_agent: '', url: '', referer: ''},{}...]}, query: {short_code: '',since_utc_seconds: 0, until_utc_seconds: 0}
+```
 
-==== API Credential Show ====
+#### API Credential Show
 
-```GET /api_credentials/:api_key```
-===== Query =====
+##### Query
+```ruby
+get_url = "/api_credentials/#{api_key}"```
 {json_data: {api_key: '', utc_time_in_seconds: 0}, verification_hash: ''}
+```
 
-===== Result =====
+##### Result
+```ruby
 {json_data: {api_key: '', shortened_urls: [{short_code: '', url: '', created_at_utc_seconds: 0},{}...]}}
+```
 
 
 
-== Sunday, 2nd April ==
+## Sunday, 2nd April
 
-=== Hit Logging Data Considerations ===
+### Hit Logging Data Considerations
 
 I will be using a user-agent parser to store extra information about each hit the shortened urls have.  The main questions is how much to normalize the browser data.  There are two options.
 
@@ -38,7 +47,7 @@ I will be using a user-agent parser to store extra information about each hit th
 
 Fourth Normal form would give us the most space saving and has the highest querying performance.  It also has the most clarity of design if other developers need to work on the code  But has the cost of additional queries for each hit.  If performance becomes a problem, we could cache the tables for faster querying.  I will go with 4NF since this design is not aiming for high performance at the start.  Need to make sure it's easy to refactor if we need to switch to a different form. If the service is expected to handle a large number of hits then First Normal Form would most likely be optimal.
 
-=== Hit & Related Tables Design ===
+### Hit & Related Tables Design
 
 I'm planning on implementing a change url feature, so we will need to store what url it was redirected to rather than just shortened_url_id
 
@@ -71,22 +80,22 @@ I'm planning on implementing a change url feature, so we will need to store what
   * name
 
 
-=== Change to Hash Signature ===
+### Change to Hash Signature
 
 After doing a bit of research on api authentication it seems like MD5 is not a good choice for the hash signature to verify the api secret.  The authentication I'm using is https://en.wikipedia.org/wiki/Hash-based_message_authentication_code which is vulnerable to a length extension attack (https://en.wikipedia.org/wiki/Length_extension_attack).  This shouldn't cause any problems as the api authentication is not that important for this service.  However, I can defend against it by using a slightly different hash signature.  Instead of md5(secret + data) which is vulnerable, I can use md5(secret + md5(secret + data)).  I could switch to SHA-3 instead of MD5 but that doesn't have great support in ruby and other languages.
 
-== Saturday, 1st April ==
+## Saturday, 1st April
 
-=== Home Page Form Object Creation ===
+### Home Page Form Object Creation
 
 The home page is normally displayed from dashboards#home.  The home method creates 2 objects for the forms @api_credential and @shortened_url.  Since api_credential#create and shortened_url#create both will need to display the home page again if form validation fails I need to have a way to create the other object easily.  I've decided to make a simple module which has a function render_dashboard_home.  That method will create each object if it doesnt exist and then call render to display dashboards#home.  That way all the controller methods can use that function to set things up.  It seems like there should be a more standard way of handling this but I have not found any. I decided to use a module rather than adding the function on ApplicationController so that it's clear what is happening since it requires an include statement.
 
-=== Detailed API Request Format ===
+### Detailed API Request Format
 
-==== Shorten URL (shortened_url put) ====
+#### Shorten URL (shortened_url put)
 
 The json_data will be a json encoded hash.  The verification_hash is a MD5 hash of json_data + api_secret (both strings).
-````
+````ruby
 {
   json_data: {
     url: "http://www.google.com",
@@ -97,67 +106,71 @@ The json_data will be a json encoded hash.  The verification_hash is a MD5 hash 
 }
 ````
 
-== Friday, 31st March ==
+## Friday, 31st March
 
-=== API Request Authorization ===
+### API Request Authorization
 
 I'm making a simple secure authorization system which uses a secret key that is added to the data to gen an MD5 hash.  That way the system can check if the request is valid.  The data (post or get) for an api request will have the following fields:
 
-```{json_data: "(data in json format...url, api_key, utc_unix_time, etc)", verification_hash: "a hash of the json_data string + the api_secret"}```
+```ruby
+{json_data: "(data in json format...url, api_key, utc_unix_time, etc)", verification_hash: "a hash of the json_data string + the api_secret"}
+```
 
 The API Secret is never transmitted in the API Request.  The utc_unix_time is passed so that the request stops working after 10 minutes to make it not be possible to resubmit at a later time and spam the server.
 
 
-=== Validations Testing ===
+### Validations Testing
 
 Unable to validate using rspec for uniqueness on shortened_url.  Read shortened_url_spec.rb for info.
 
-=== Rubocop ===
+### Rubocop
 
 I use rubocop for all of my code to ensure I'm following the ruby style guide.  bin/rubocop_auto is a shell script I made which runs rubocop on any files that you change.  It uses MD5 to check for changes.  Vagrant shared file systems do not support linux inotifywait on file change events, this is due to virtual box shared folders, so I have to use MD5 to check for changes.  To use it just pass the filenames like this:
 
-```bin/rubocop_auto app/models/shortened_url.rb spec/models/shortened_url_spec.rb```
+```bash
+bin/rubocop_auto app/models/shortened_url.rb spec/models/shortened_url_spec.rb
+```
 
 Filename globbing (*) also works.
 
 
-=== Testing Model with RSpec ===
+### Testing Model with RSpec
 
 I'm not used to testing the model using rspec.  I'm not sure how to do a proper test of the short code getting set when create.  I'll just test that it gets set on create.
 
-=== Short Code Generation ===
+### Short Code Generation
 
 I'm tempted to write code so I can do something like 6.random_letters.  However, I need to have a limited char set rather than all letters so I cannot make an extension.  Anyways it's best not to make extensions that aren't very important.  I'll just code a function on the model class to generate the sequence.  I'm splitting up the functions into one that makes a random code and one that checks if it is unique or not.  This way it's more understandable and DRY.
 
-=== Development Plan/Order/Tasks ===
+### Development Plan/Order/Tasks
 
-# Create models
+1. Create models
 
-# Write rspec tests for shortened_url model (get new short code)
+2. Write rspec tests for shortened_url model (get new short code)
 
-# Write rspec tests for api authentication
+3. Write rspec tests for api authentication
 
-# Plan api format/functions
+4. Plan api format/functions
 
-# Write cucumber tests for frontend (create api, shorten url)
+5. Write cucumber tests for frontend (create api, shorten url)
 
-# Write tests rspec for api actions (create shortened url, update shortened url, get log shortened url, get stats shortened url)
+6. Write tests rspec for api actions (create shortened url, update shortened url, get log shortened url, get stats shortened url)
 
-# Setup basic gem
+7. Setup basic gem
 
-# Write tests for gem (rspec)
+8. Write tests for gem (rspec)
 
-# TDD for tests in order
+9. TDD for tests in order
 
 
 
-== Thursday, 30th March ==
+## Thursday, 30th March
 
-=== Testing ===
+### Testing
 
 I normally use cucumber as my main testing tool and do all testing as behavior from the users perspective. Since this app is meant to have an api and I'll be testing it thoroughly I'll use rspec.
 
-=== Project Notes ===
+### Project Notes
 
 I normally focus on what the end users (the client) is using the app for in order to make my decisions.  It's very important that I consider the project from the end-users point of view rather than my own.  In this case I'm writing the program based on the following assumptions:
 
@@ -175,15 +188,15 @@ I normally focus on what the end users (the client) is using the app for in orde
 
 
 
-=== Table Design ===
+### Table Design
 
-==== Primary Key on Shortened URL Table ====
+#### Primary Key on Shortened URL Table
 The short code will be a varchar field rather than the primary key.  
 * Performance issues (longer reads, joins, etc)
 * Cannot use a CHAR field (due to needing longer lengths in the future)
 * Storage size for the table tracking hits (the record that is used to track hits will need to store it instead of an int/bigint column)
 
 
-==== Using Table to Store Hits ====
+#### Using Table to Store Hits
 
 The main reason for storing hits in a db table is for ease of querying. Once performance needs to be improved this would be a key area of focus due to each "hit" adding an entry in the table.  Also, I don't have much experience with non relational db storage of info so at this stage I'm sticking with a mysql table.
