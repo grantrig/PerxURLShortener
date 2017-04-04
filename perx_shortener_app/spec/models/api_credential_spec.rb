@@ -13,5 +13,6 @@ RSpec.describe APICredential, type: :model do
     it 'sets short code before create' do
       expect(api_credential).to callback(:set_key_and_secret).before(:validation)
     end
+    specify{should have_db_index(:api_key).unique(true)}
   end
 end

@@ -12,6 +12,8 @@ class APICredential < ApplicationRecord
 
   validates :name, presence: true
 
+  has_many :shortened_urls
+
   def set_key_and_secret
     return unless new_record?
     self.api_key = self.class.unique_api_key

@@ -3,8 +3,8 @@ require 'spec_helper'
 
 RSpec.describe ShortenedUrl, type: :model do
   describe 'Validations' do
-    url = 'http://www.google.com'
-    shortened_url = ShortenedUrl.create!(url: url)
+    let(:url){'http://www.google.com'}
+    let(:shortened_url){ShortenedUrl.create!(url: url)}
     it 'creates a short code without an api credential id using a model method' do
       expect(shortened_url).to be_valid
     end
@@ -29,4 +29,7 @@ RSpec.describe ShortenedUrl, type: :model do
       expect(shortened_url.short_code).to eq(old_short_code)
     end
   end
+  specify{should belong_to(:api_credential)}
+  specify{should have_many(:shortened_url_hits)}
+  it{should have_db_index(:short_code).unique(true)}
 end

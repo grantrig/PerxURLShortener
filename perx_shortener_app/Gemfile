@@ -39,6 +39,7 @@ group :development, :test do
   gem 'cucumber-rails', :require => false
   gem 'poltergeist'
   gem 'rspec-rails'
+  gem 'rspec-collection_matchers'
   # database_cleaner is not required, but highly recommended
   gem 'database_cleaner'  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
@@ -48,6 +49,7 @@ group :development, :test do
   gem 'capybara'
   gem 'factory_girl'
   gem 'factory_girl_rails'
+  gem 'faker'
 end
 
 group :development do
@@ -64,3 +66,4 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'simple_form'
 gem 'addressable'
+gem 'device_detector'

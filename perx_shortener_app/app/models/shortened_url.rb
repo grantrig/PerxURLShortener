@@ -7,10 +7,14 @@ class ShortenedUrl < ApplicationRecord
 
   before_validation :set_short_code
 
+  belongs_to :api_credential, optional: true, class_name: 'APICredential'
+
   validates_uniqueness_of :short_code
   validates_length_of :short_code, in: 6..12
   validates_length_of :url, in: 6..1000
   validates_format_of :url, with: %r{https?://.*}
+
+  has_many :shortened_url_hits
 
   def set_short_code
     self.short_code = self.class.unique_short_code if new_record?

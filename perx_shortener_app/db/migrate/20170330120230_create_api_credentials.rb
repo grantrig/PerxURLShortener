@@ -5,6 +5,8 @@ class CreateApiCredentials < ActiveRecord::Migration[5.0]
       t.string :api_key
       t.string :api_secret
       t.timestamps
+      t.index :api_key, unique: true
     end
+    
   end
 end

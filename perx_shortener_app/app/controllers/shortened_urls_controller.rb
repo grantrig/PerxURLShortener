@@ -14,8 +14,32 @@ class ShortenedUrlsController < ApplicationController
   end
 
   def show
-    @shortened_url = ShortenedUrl.where('short_code = ?', params[:short_code]).first
-    redirect_to @shortened_url.url
+    respond_to do |format|
+      format.html{show_via_html}
+      format.json{show_via_api}
+    end
+  end
+
+  def show_via_api
+    api_request = APIRequest.new_from_params(params)
+    return head :forbidden unless api_request.authenticated?
+    json_parsed = api_request.json_parsed
+    # Using json for the short code instead of params[:short_code] since the api_request is signed
+    shortened_url = ShortenedUrl.where('short_code = ?', json_parsed[:short_code]).first
+    return head :not_found unless shortened_url
+    return head :forbidden unless shortened_url.api_credential_id == api_request.api_credential.id
+    query = shortened_url.shortened_url_hits
+    query = query.where('UNIX_TIMESTAMP(created_at) >= ?', json_parsed[:since_utc_seconds]) if json_parsed[:since_utc_seconds]
+    query = query.where('UNIX_TIMESTAMP(created_at) <= ?', json_parsed[:until_utc_seconds]) if json_parsed[:until_utc_seconds]
+    hits = query
+    render json: APIHitResult.create_from_records(json_parsed, hits).response
+  end
+
+  def show_via_html
+    shortened_url = ShortenedUrl.where('short_code = ?', params[:short_code]).first
+    return head :not_found unless shortened_url
+    ShortenedUrlHit.record_hit(request: request, shortened_url: shortened_url)
+    redirect_to shortened_url.url
   end
 
   private
@@ -33,10 +57,7 @@ class ShortenedUrlsController < ApplicationController
     api_request = APIRequest.new_from_params(params)
     return head :forbidden unless api_request.authenticated?
     @shortened_url = ShortenedUrl.new(url: api_request.json_parsed[:url])
-    if @shortened_url.save
-      render status: :created, location: @shortened_url.full_shortened_url, json: @shortened_url
-    else
-      return head :bad_request
-    end
+    return head :bad_request unless @shortened_url.save
+    render status: :created, location: @shortened_url.full_shortened_url, json: @shortened_url
   end
 end

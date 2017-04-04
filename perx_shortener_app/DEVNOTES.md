@@ -2,18 +2,73 @@
 
 This file will contain my thoughts while I develop the application. Older entries are at the bottom.
 
+== Tuesday, 4th April ==
+
+=== JSON API Format ===
+
+==== Shortened URL Show ====
+
+```GET /s/:short_code```
+===== Query =====
+{json_data: {api_key: '', utc_time_in_seconds: 0, short_code: '', since_utc_seconds: 0, until_utc_seconds: 0}, verification_hash: ''}
+
+===== Result =====
+{hits: [{ip_address: '', utc_seconds: 0, operating_system: '', operating_system_version: '', browser_type: '', browser_version: '', device: '', accept_language: '', user_agent: '', url: '', referer: ''},{}...]}, query: {short_code: '',since_utc_seconds: 0, until_utc_seconds: 0}
+
+==== API Credential Show ====
+
+```GET /api_credentials/:api_key```
+===== Query =====
+{json_data: {api_key: '', utc_time_in_seconds: 0}, verification_hash: ''}
+
+===== Result =====
+{json_data: {api_key: '', shortened_urls: [{short_code: '', url: '', created_at_utc_seconds: 0},{}...]}}
+
+
+
 == Sunday, 2nd April ==
 
-=== Hit Logging Data ===
+=== Hit Logging Data Considerations ===
 
-I will be using a user-agent parser to store extra information about each hit the shortened urls have.  The main questions is how much to normalize the browser data.  There are two options
+I will be using a user-agent parser to store extra information about each hit the shortened urls have.  The main questions is how much to normalize the browser data.  There are two options.
 
 * Store the information in the hit table as strings (operating system, os version, browser type, browser version, device)
-* 2NF (2nd Normal Form) normalize the data and just reference them via belongs to.  belongs_to :operating_system_version, belongs_to :browser_version (operating system version would have os name and version)
-* 3NF (3rd Normal Form) Where there is a table named operating_system_version which has operating_system_type_id and version.
+* Normalize the data and just reference them via belongs to.  belongs_to :operating_system_version, belongs_to :browser_version (operating system version would have os name and version)
+* Where there is a table named operating_system_version which has operating_system_type_id and version.
 
-3rd Normal form would give us the most space saving and has the highest querying data performance.  It also has the most clarity of design if other developers need to work on the code  But has the cost of additional queries for each hit.  I will go with 3NF since this design is not aiming for high performance at the start.  Need to make sure it's easy to refactor if we need to switch to a different form.
+Fourth Normal form would give us the most space saving and has the highest querying performance.  It also has the most clarity of design if other developers need to work on the code  But has the cost of additional queries for each hit.  If performance becomes a problem, we could cache the tables for faster querying.  I will go with 4NF since this design is not aiming for high performance at the start.  Need to make sure it's easy to refactor if we need to switch to a different form. If the service is expected to handle a large number of hits then First Normal Form would most likely be optimal.
 
+=== Hit & Related Tables Design ===
+
+I'm planning on implementing a change url feature, so we will need to store what url it was redirected to rather than just shortened_url_id
+
+* Shortened Url Hit
+  * shortened_url_id
+  * url
+  * operating_system_version_id
+  * browser_version_id
+  * device_id
+  * ip_address
+  * accept_language
+  * user_agent
+  * referer
+  
+* Operating System Version
+  * operating_system_id
+  * name
+
+* Operating System
+  * name
+
+* Browser Version
+  * browser_id
+  * name
+
+* Browser
+  * name
+
+* Device
+  * name
 
 
 === Change to Hash Signature ===
