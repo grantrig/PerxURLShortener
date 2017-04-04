@@ -1,4 +1,4 @@
-# Developer Notes
+# Developer Notes - Read from Bottom to Top
 
 This file will contain my thoughts while I develop the application. Older entries are at the bottom.
 
@@ -8,10 +8,10 @@ This file will contain my thoughts while I develop the application. Older entrie
 
 #### Shortened URL Show
 
-```
+
 ##### Query
 ```ruby
-url = "/s/#{short_code}"
+get_url = "/s/#{short_code}"
 {json_data: {api_key: '', utc_time_in_seconds: 0, short_code: '', since_utc_seconds: 0, until_utc_seconds: 0}, verification_hash: ''}
 ```
 
@@ -24,7 +24,7 @@ url = "/s/#{short_code}"
 
 ##### Query
 ```ruby
-get_url = "/api_credentials/#{api_key}"```
+get_url = "/api_credentials/#{api_key}"
 {json_data: {api_key: '', utc_time_in_seconds: 0}, verification_hash: ''}
 ```
 
