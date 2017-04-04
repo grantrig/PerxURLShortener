@@ -20,6 +20,7 @@ Building the virtual machine is this easy:
 
 ```bash
 git clone https://github.com/grantrig/PerxURLShortener.git
+cd PerxURLShortener
 vagrant up;vagrant ssh
 ```
 

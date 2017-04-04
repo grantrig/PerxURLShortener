@@ -16,3 +16,4 @@ echo "Installing Rails"
 gem install rails --no-rdoc --no-ri 
 
 gem install rubocop
+gem install rspec
