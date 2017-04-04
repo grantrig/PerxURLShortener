@@ -64,7 +64,7 @@ Vagrant.configure(2) do |config|
   # policy server and optionally a policy file to run:
   #
   config.vm.synced_folder "perx_shortener_app", "/perx_shortener_app"
-  config.vm.synced_folder "perx_shortener_gem", "/perx_shortener_gem"
+  config.vm.synced_folder "perx_shortener_samples", "/perx_shortener_samples"
 
   config.vm.provision :shell, :path => "vagrant_shell_scripts/initial.sh",  :args => "stable", privileged: true
   config.vm.provision :shell, :path => "vagrant_shell_scripts/install-rvm.sh",  :args => "stable", privileged: false
@@ -72,6 +72,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision :shell, :path => "vagrant_shell_scripts/setup-phantomjs.sh",  :args => "", privileged: true
   config.vm.provision :shell, :path => "vagrant_shell_scripts/setup-node.sh",  :args => "", privileged: true
   config.vm.provision :shell, :path => "vagrant_shell_scripts/setup-shell.sh",  :args => "", privileged: false
+  config.vm.provision :shell, :path => "vagrant_shell_scripts/setup-app.sh",  :args => "", privileged: false
 
 #  config.vm.provision :shell, :path => "shell/jgenerator.sh",  :args => "", privileged: false
 #  config.vm.provision :shell, :path => "shell/setup-drhespa.j3.sh",  :args => "", privileged: false

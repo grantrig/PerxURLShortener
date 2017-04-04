@@ -33,12 +33,13 @@ RSpec.describe ShortenedUrlsController, type: :controller do
           test_api_request.data[:url] = 'http://www.google.com'
           do_create(test_api_request)
         end
+        specify{expect(ShortenedUrl.last.api_credential.id).to eq(test_api_request.api_credential.id)}
         specify{expect(response).to have_http_status(:created)}
         specify{expect(response).to have_header(:location, ShortenedUrl.last.full_shortened_url)}
       end
     end
   end
-  describe '#show_via_api' do
+  describe '#show_via_api - returns a list of all hits' do
     context 'when valid credentials' do
       let(:api_credential){APICredential.first || create(:api_credential)}
       let(:shortened_url){create(:google_shortened_url_with_hits_and_first_api)}

@@ -56,7 +56,7 @@ class ShortenedUrlsController < ApplicationController
   def create_via_api
     api_request = APIRequest.new_from_params(params)
     return head :forbidden unless api_request.authenticated?
-    @shortened_url = ShortenedUrl.new(url: api_request.json_parsed[:url])
+    @shortened_url = ShortenedUrl.new(url: api_request.json_parsed[:url], api_credential: api_request.api_credential)
     return head :bad_request unless @shortened_url.save
     render status: :created, location: @shortened_url.full_shortened_url, json: @shortened_url
   end
