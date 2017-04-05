@@ -11,7 +11,7 @@ If you are not familier with Vagrant you can still run the app normally.  I can 
 
 * Follow the instructions below to setup the development environment.
 * Read [perx_shortener_app/DEVNOTES.md](perx_shortener_app/DEVNOTES.md) for the developer notes.  **Read them from bottom to top.**
-* Read the controller specs (perx_shortener_app/spec/controllers/) since they show how the system works best.
+* Read the controller specs [perx_shortener_app/spec/controllers/](perx_shortener_app/spec/controllers/) since they show how the system works best.
 
 ## Setting Up Virtual Machine for Tests & Development
 
@@ -81,7 +81,7 @@ The API uses signed requests for credential verification.  This protects unautho
 
 ### Simple Samples
 
-The samples are available at (perx_shortener_samples/).
+The samples are available at [perx_shortener_samples/](perx_shortener_samples/).
 
 #### Running the samples
 
@@ -98,7 +98,7 @@ Then on your computer
 
 1. visit http://localhost:3036/
 2. Enter your name for the credentials & click Get Credentials
-3. Copy the api_key and api_secret and put them in (perx_shortener_samples/api_keys.rb)
+3. Copy the api_key and api_secret and put them in [perx_shortener_samples/api_keys.rb](perx_shortener_samples/api_keys.rb)
 4. Run ```vagrant ssh``` in the git directory to launch another vagrant ssh session
 
 ##### Create a shortened url
