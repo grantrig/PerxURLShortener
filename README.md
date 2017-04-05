@@ -1,8 +1,17 @@
 # Perx URL Shortener Development Envirnment
 
+
+## Introduction
+
 This project uses Vagrant to set up a virtual machine development/test enviroment that installs all required packages/software.   Using vagrant is not required, but it ensures that the system settings (like mysql user/pass) replicate the project development settings perfectly.  This way the development enviroment is tied to the project rather than the computer.
 
 If you are not familier with Vagrant you can still run the app normally.  I can also come to your office to show you how everything works and explain the design and functionality.
+
+## Where to Start
+
+* Follow the instructions below to setup the development environment.
+* Read [perx_shortener_app/DEVNOTES.md](perx_shortener_app/DEVNOTES.md) for the developer notes.  **Read them from bottom to top.**
+* Read the controller specs (perx_shortener_app/spec/controllers/) since they show how the system works best.
 
 ## Setting Up Virtual Machine for Tests & Development
 
