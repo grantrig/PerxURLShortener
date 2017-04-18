@@ -29,8 +29,8 @@ class ShortenedUrlsController < ApplicationController
     return head :not_found unless shortened_url
     return head :forbidden unless shortened_url.api_credential_id == api_request.api_credential.id
     query = shortened_url.shortened_url_hits
-    query = query.where('UNIX_TIMESTAMP(created_at) >= ?', json_parsed[:since_utc_seconds]) if json_parsed[:since_utc_seconds]
-    query = query.where('UNIX_TIMESTAMP(created_at) <= ?', json_parsed[:until_utc_seconds]) if json_parsed[:until_utc_seconds]
+    query = query.where('UNIX_TIMESTAMP(CONVERT_TZ(created_at, "+00:00", @@session.time_zone)) >= ?', json_parsed[:since_utc_seconds]) if json_parsed[:since_utc_seconds]
+    query = query.where('UNIX_TIMESTAMP(CONVERT_TZ(created_at, "+00:00", @@session.time_zone)) <= ?', json_parsed[:until_utc_seconds]) if json_parsed[:until_utc_seconds]
     hits = query
     render json: APIHitResult.create_from_records(json_parsed, hits).response
   end
